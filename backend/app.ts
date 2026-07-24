@@ -24,6 +24,11 @@ app.use(
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 
+// API Health Check
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok", message: "Backend is online!" });
+});
+
 // API Routes
 app.use("/api/upload", uploadRoutes);
 

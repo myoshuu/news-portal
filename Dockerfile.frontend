@@ -41,4 +41,4 @@ COPY --from=0 /app/dist ./dist
 
 EXPOSE 3000
 
-CMD ["serve", "-l", "3000", "dist"]
+CMD ["serve", "-s", "-l", "3000", "dist"]
