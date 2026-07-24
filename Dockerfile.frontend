@@ -24,6 +24,8 @@ RUN sed -i 's/"workspace:\*"/"file:\.\/shared"/g' package.json
 RUN bun install
 
 # Build with vite
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
 RUN bunx vite build
 
 # Production stage - serve with Bun
