@@ -9,6 +9,7 @@ COPY shared ./shared
 # Copy backend source
 COPY backend/server.ts ./server.ts
 COPY backend/app.ts ./app.ts
+COPY backend/tsconfig.json ./tsconfig.json
 COPY backend/src ./src
 
 # Copy backend package.json
