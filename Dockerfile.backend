@@ -10,7 +10,7 @@ COPY backend/src ./src
 # Copy shared package
 COPY shared ./node_modules/@news-portal/shared
 
-# Create minimal package.json with only runtime deps
+# Create minimal package.json - use file: protocol for local package
 RUN printf '{"name":"backend","type":"module","dependencies":{\
 "bcrypt":"^6.0.0",\
 "cookie-parser":"^1.4.7",\
@@ -23,7 +23,7 @@ RUN printf '{"name":"backend","type":"module","dependencies":{\
 "morgan":"^1.11.0",\
 "multer":"^2.2.0",\
 "slugify":"^1.6.9",\
-"@news-portal/shared":"^1.0.0"}}' > package.json
+"@news-portal/shared":"file:node_modules/@news-portal/shared"}}' > package.json
 
 # Install dependencies
 RUN bun install --production
