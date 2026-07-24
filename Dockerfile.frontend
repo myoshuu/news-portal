@@ -13,11 +13,13 @@ COPY frontend/components.json ./components.json
 COPY frontend/src ./src
 COPY frontend/public ./public
 
-# Copy shared package (mimic workspace structure)
-COPY shared/package.json ./node_modules/@news-portal/shared/package.json
-COPY shared/index.ts ./node_modules/@news-portal/shared/index.ts
+# Copy shared package to node_modules
+COPY shared ./node_modules/@news-portal/shared
 
-# Install dependencies (without frozen lockfile due to workspace)
+# Fix package.json - replace workspace dep with file path
+RUN sed -i 's|"@news-portal/shared": "workspace:\\*"|"@news-portal/shared": "file:node_modules/@news-portal/shared"|g' package.json
+
+# Install dependencies
 RUN bun install
 
 # Build with vite directly
