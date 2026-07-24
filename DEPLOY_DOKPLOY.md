@@ -1,76 +1,55 @@
-# Deployment Guide for Dokploy + Cloudflare Tunnel
+# Dokploy Deployment Guide
 
-## Architecture
+## Setup Two Separate Apps
+
+### App 1: Backend
+
+1. **Create App** → Name: `backend`
+2. **Build Type**: Dockerfile
+3. **Dockerfile**: `Dockerfile.backend`
+4. **Port**: `5000`
+5. **Health Check**: `/api/health` (or any existing endpoint)
+6. **Environment Variables**:
+   ```
+   PORT=5000
+   MONGODB_URI=mongodb://your-mongo:27017/news-portal
+   JWT_SECRET=your-secure-random-string
+   ```
+
+### App 2: Frontend
+
+1. **Create App** → Name: `frontend`
+2. **Build Type**: Dockerfile
+3. **Dockerfile**: `Dockerfile.frontend`
+4. **Port**: `3000`
+5. **Build Environment Variables**:
+   ```
+   VITE_API_URL=https://api.yourdomain.com
+   ```
+
+## Cloudflare Tunnel Routes
 
 ```
-Cloudflare Tunnel
-    ├── yourdomain.com    → Frontend (port 3000)
-    └── api.yourdomain.com → Backend (port 5000)
+yourdomain.com     → Frontend (port 3000)
+api.yourdomain.com → Backend (port 5000)
 ```
 
-## Setup
+## Key Changes Made
 
-### 1. Push to Git
-```bash
-git add .
-git commit -m "Add Docker setup for Dokploy"
-git push
-```
+1. **Dockerfile.backend** - Standalone, no workspace references
+2. **Dockerfile.frontend** - Standalone, builds with `bunx vite build`
+3. Removed `docker-compose.yml` - not needed for Dokploy separate deployments
 
-### 2. Create Deployments in Dokploy
-
-**Backend:**
-- Type: Dockerfile Deploy
-- Dockerfile: `Dockerfile.backend`
-- Port: `5000`
-- Environment Variables:
-  ```
-  MONGODB_URI=mongodb://your-mongo:27017/news-portal
-  JWT_SECRET=your-secure-random-string
-  PORT=5000
-  ```
-
-**Frontend:**
-- Type: Dockerfile Deploy
-- Dockerfile: `Dockerfile.frontend`
-- Port: `3000`
-- Environment Variables (for build):
-  ```
-  VITE_API_URL=https://api.yourdomain.com
-  ```
-
-### 3. Cloudflare Tunnel Configuration
-
-Connect both services to your Cloudflare Tunnel:
-
-```bash
-# Option A: Two separate tunnels (recommended)
-cloudflared tunnel run --token=<frontend-token> -port 3000
-cloudflared tunnel run --token=<backend-token> -port 5000
-
-# Option B: One tunnel with routes
-cloudflared tunnel run --token=<tunnel-token>
-```
-
-### 4. Cloudflare Dashboard Routes
-
-Create DNS records:
-| Type | Name | Target |
-|------|------|--------|
-| CNAME | yourdomain.com | tunnel->frontend |
-| CNAME | api | tunnel->backend |
-
-### 5. Local Testing
+## Testing Locally
 
 ```bash
-docker-compose up --build
+# Build backend
+docker build -f Dockerfile.backend -t backend .
+
+# Build frontend
+docker build -f Dockerfile.frontend -t frontend .
+
+# Run
+docker run -p 5000:5000 -e MONGODB_URI=... -e JWT_SECRET=... backend
+docker run -p 3000:3000 frontend
 ```
-
-- Frontend: http://localhost:3000
-- Backend: http://localhost:5000
-
-## Important Notes
-
-1. **Update Vite config** for production API URL - set `VITE_API_URL` to your API domain
-2. **CORS** is already configured in the backend (`cors` package)
-3. **File uploads** go through the backend directly at `/uploads`

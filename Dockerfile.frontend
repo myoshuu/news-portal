@@ -1,42 +1,39 @@
-# Frontend Dockerfile - Build with Vite, serve with Bun
-FROM oven/bun:1-alpine AS builder
+# Frontend Dockerfile - Standalone for Dokploy
+FROM oven/bun:1-alpine
 
 WORKDIR /app
 
-# Copy root workspace files
-COPY package.json bun.lock* ./
+# Copy frontend files
+COPY frontend/package.json ./package.json
+COPY frontend/bun.lock* ./bun.lock
+COPY frontend/tsconfig*.json ./tsconfig.json
+COPY frontend/vite.config.ts ./vite.config.ts
+COPY frontend/index.html ./index.html
+COPY frontend/components.json ./components.json
+COPY frontend/src ./src
+COPY frontend/public ./public
 
 # Copy shared package
-COPY shared/package.json shared/
-COPY shared/index.ts shared/
-
-# Copy frontend package
-COPY frontend/package.json frontend/
-COPY frontend/tsconfig*.json frontend/
-COPY frontend/vite.config.ts frontend/
-COPY frontend/index.html frontend/
-COPY frontend/components.json frontend/
-COPY frontend/src ./frontend/src
-COPY frontend/public ./frontend/public
+COPY shared/package.json ./shared/package.json
+COPY shared/index.ts ./shared/index.ts
 
 # Install dependencies
 RUN bun install --frozen-lockfile
 
-# Build the frontend
-RUN bun run frontend:build
+# Build with vite directly (skip workspace build script)
+RUN bunx vite build
 
-# Production stage - serve static files with Bun
-FROM oven/bun:1-alpine AS runner
+# Production stage - serve with Bun
+FROM oven/bun:1-alpine
 
 WORKDIR /app
 
 # Install serve for static file serving
 RUN bun add -g serve
 
-# Copy built static files
-COPY --from=builder /app/frontend/dist ./dist
+# Copy built files
+COPY --from=0 /app/dist ./dist
 
 EXPOSE 3000
 
-# Serve static files on port 3000
 CMD ["serve", "-l", "3000", "dist"]
