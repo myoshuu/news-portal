@@ -3,12 +3,12 @@ FROM oven/bun:1-alpine
 
 WORKDIR /app
 
+# Copy shared package FIRST
+COPY shared ./node_modules/@news-portal/shared
+
 # Copy backend source
 COPY backend/server.ts ./server.ts
 COPY backend/src ./src
-
-# Copy shared package
-COPY shared ./node_modules/@news-portal/shared
 
 # Create minimal package.json - use file: protocol for local package
 RUN printf '{"name":"backend","type":"module","dependencies":{\

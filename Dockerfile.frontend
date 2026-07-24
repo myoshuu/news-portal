@@ -3,15 +3,16 @@ FROM oven/bun:1-alpine
 
 WORKDIR /app
 
+# Copy shared package FIRST
+COPY shared ./node_modules/@news-portal/shared
+
 # Copy frontend source
 COPY frontend/vite.config.ts ./vite.config.ts
 COPY frontend/index.html ./index.html
 COPY frontend/components.json ./components.json
 COPY frontend/src ./src
 COPY frontend/public ./public
-
-# Copy shared package
-COPY shared ./node_modules/@news-portal/shared
+COPY frontend/tsconfig*.json ./
 
 # Create minimal package.json - use file: protocol for local package
 RUN printf '{"name":"frontend","type":"module","dependencies":{\
@@ -38,9 +39,6 @@ RUN printf '{"name":"frontend","type":"module","dependencies":{\
 "tailwindcss":"^4.3.2",\
 "typescript":"~6.0.2",\
 "vite":"^8.1.1"}}' > package.json
-
-# Copy tsconfig
-COPY frontend/tsconfig*.json ./
 
 # Install dependencies
 RUN bun install
