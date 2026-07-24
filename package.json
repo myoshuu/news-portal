@@ -1,0 +1,9 @@
+{
+  "name": "news-portal-monorepo",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend",
+    "shared"
+  ]
+}
