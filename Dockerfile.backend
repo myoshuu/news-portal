@@ -3,21 +3,30 @@ FROM oven/bun:1-alpine
 
 WORKDIR /app
 
-# Copy backend files
-COPY backend/package.json ./package.json
-COPY backend/bun.lock* ./bun.lock
-COPY backend/tsconfig.json ./tsconfig.json
+# Copy backend source
 COPY backend/server.ts ./server.ts
 COPY backend/src ./src
 
-# Copy shared package to node_modules
+# Copy shared package
 COPY shared ./node_modules/@news-portal/shared
 
-# Fix package.json - replace workspace dep with file path
-RUN sed -i 's|"@news-portal/shared": "workspace:\\*"|"@news-portal/shared": "file:node_modules/@news-portal/shared"|g' package.json
+# Create minimal package.json with only runtime deps
+RUN printf '{"name":"backend","type":"module","dependencies":{\
+"bcrypt":"^6.0.0",\
+"cookie-parser":"^1.4.7",\
+"cors":"^2.8.6",\
+"dotenv":"^17.4.2",\
+"express":"^5.2.1",\
+"helmet":"^8.3.0",\
+"jsonwebtoken":"^9.0.3",\
+"mongoose":"^8.0.0",\
+"morgan":"^1.11.0",\
+"multer":"^2.2.0",\
+"slugify":"^1.6.9",\
+"@news-portal/shared":"^1.0.0"}}' > package.json
 
 # Install dependencies
-RUN bun install
+RUN bun install --production
 
 # Create uploads directory
 RUN mkdir -p /app/uploads

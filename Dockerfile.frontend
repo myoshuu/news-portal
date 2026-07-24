@@ -3,26 +3,49 @@ FROM oven/bun:1-alpine
 
 WORKDIR /app
 
-# Copy frontend files
-COPY frontend/package.json ./package.json
-COPY frontend/bun.lock* ./bun.lock
-COPY frontend/tsconfig*.json ./tsconfig.json
+# Copy frontend source
 COPY frontend/vite.config.ts ./vite.config.ts
 COPY frontend/index.html ./index.html
 COPY frontend/components.json ./components.json
 COPY frontend/src ./src
 COPY frontend/public ./public
 
-# Copy shared package to node_modules
+# Copy shared package
 COPY shared ./node_modules/@news-portal/shared
 
-# Fix package.json - replace workspace dep with file path
-RUN sed -i 's|"@news-portal/shared": "workspace:\\*"|"@news-portal/shared": "file:node_modules/@news-portal/shared"|g' package.json
+# Create minimal package.json with only runtime deps
+RUN printf '{"name":"frontend","type":"module","dependencies":{\
+"@base-ui/react":"^1.6.0",\
+"@fontsource-variable/inter":"^5.2.8",\
+"@hookform/resolvers":"^5.4.0",\
+"@news-portal/shared":"^1.0.0",\
+"@radix-ui/react-label":"^2.1.12",\
+"@radix-ui/react-slot":"^1.3.0",\
+"class-variance-authority":"^0.7.1",\
+"clsx":"^2.1.1",\
+"lucide-react":"^1.24.0",\
+"react":"^19.2.7",\
+"react-dom":"^19.2.7",\
+"react-hook-form":"^7.81.0",\
+"react-router":"^8.2.0",\
+"tailwind-merge":"^3.6.0",\
+"zod":"^4.4.3"},\
+"devDependencies":{\
+"@types/node":"^26.1.1",\
+"@types/react":"^19.2.17",\
+"@types/react-dom":"^19.2.3",\
+"@vitejs/plugin-react":"^6.0.3",\
+"tailwindcss":"^4.3.2",\
+"typescript":"~6.0.2",\
+"vite":"^8.1.1"}}' > package.json
+
+# Copy tsconfig
+COPY frontend/tsconfig*.json ./
 
 # Install dependencies
 RUN bun install
 
-# Build with vite directly
+# Build with vite
 RUN bunx vite build
 
 # Production stage - serve with Bun
