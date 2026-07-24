@@ -14,31 +14,11 @@ COPY frontend/src ./src
 COPY frontend/public ./public
 COPY frontend/tsconfig*.json ./
 
-# Create minimal package.json - use file: protocol for local package
-RUN printf '{"name":"frontend","type":"module","dependencies":{\
-"@base-ui/react":"^1.6.0",\
-"@fontsource-variable/inter":"^5.2.8",\
-"@hookform/resolvers":"^5.4.0",\
-"@news-portal/shared":"file:./shared",\
-"@radix-ui/react-label":"^2.1.12",\
-"@radix-ui/react-slot":"^1.3.0",\
-"class-variance-authority":"^0.7.1",\
-"clsx":"^2.1.1",\
-"lucide-react":"^1.24.0",\
-"react":"^19.2.7",\
-"react-dom":"^19.2.7",\
-"react-hook-form":"^7.81.0",\
-"react-router":"^8.2.0",\
-"tailwind-merge":"^3.6.0",\
-"zod":"^4.4.3"},\
-"devDependencies":{\
-"@types/node":"^26.1.1",\
-"@types/react":"^19.2.17",\
-"@types/react-dom":"^19.2.3",\
-"@vitejs/plugin-react":"^6.0.3",\
-"tailwindcss":"^4.3.2",\
-"typescript":"~6.0.2",\
-"vite":"^8.1.1"}}' > package.json
+# Copy frontend package.json
+COPY frontend/package.json ./package.json
+
+# Replace workspace:* with the local path file:./shared
+RUN sed -i 's/"workspace:\*"/"file:\.\/shared"/g' package.json
 
 # Install dependencies
 RUN bun install

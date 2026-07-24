@@ -10,20 +10,11 @@ COPY shared ./shared
 COPY backend/server.ts ./server.ts
 COPY backend/src ./src
 
-# Create minimal package.json - use file: protocol for local package
-RUN printf '{"name":"backend","type":"module","dependencies":{\
-"bcrypt":"^6.0.0",\
-"cookie-parser":"^1.4.7",\
-"cors":"^2.8.6",\
-"dotenv":"^17.4.2",\
-"express":"^5.2.1",\
-"helmet":"^8.3.0",\
-"jsonwebtoken":"^9.0.3",\
-"mongoose":"^8.0.0",\
-"morgan":"^1.11.0",\
-"multer":"^2.2.0",\
-"slugify":"^1.6.9",\
-"@news-portal/shared":"file:./shared"}}' > package.json
+# Copy backend package.json
+COPY backend/package.json ./package.json
+
+# Replace workspace:* with the local path file:./shared
+RUN sed -i 's/"workspace:\*"/"file:\.\/shared"/g' package.json
 
 # Install dependencies
 RUN bun install --production
