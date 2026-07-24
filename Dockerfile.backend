@@ -4,7 +4,7 @@ FROM oven/bun:1-alpine
 WORKDIR /app
 
 # Copy shared package FIRST
-COPY shared ./node_modules/@news-portal/shared
+COPY shared ./shared
 
 # Copy backend source
 COPY backend/server.ts ./server.ts
@@ -23,7 +23,7 @@ RUN printf '{"name":"backend","type":"module","dependencies":{\
 "morgan":"^1.11.0",\
 "multer":"^2.2.0",\
 "slugify":"^1.6.9",\
-"@news-portal/shared":"file:node_modules/@news-portal/shared"}}' > package.json
+"@news-portal/shared":"file:./shared"}}' > package.json
 
 # Install dependencies
 RUN bun install --production

@@ -4,7 +4,7 @@ FROM oven/bun:1-alpine
 WORKDIR /app
 
 # Copy shared package FIRST
-COPY shared ./node_modules/@news-portal/shared
+COPY shared ./shared
 
 # Copy frontend source
 COPY frontend/vite.config.ts ./vite.config.ts
@@ -19,7 +19,7 @@ RUN printf '{"name":"frontend","type":"module","dependencies":{\
 "@base-ui/react":"^1.6.0",\
 "@fontsource-variable/inter":"^5.2.8",\
 "@hookform/resolvers":"^5.4.0",\
-"@news-portal/shared":"file:node_modules/@news-portal/shared",\
+"@news-portal/shared":"file:./shared",\
 "@radix-ui/react-label":"^2.1.12",\
 "@radix-ui/react-slot":"^1.3.0",\
 "class-variance-authority":"^0.7.1",\
