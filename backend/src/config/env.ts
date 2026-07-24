@@ -1,6 +1,6 @@
 // Bun automatically loads .env from the working directory — no dotenv import needed.
 export const env = {
-  PORT: parseInt(process.env.PORT || "5000", 10),
+  PORT: parseInt(process.env.PORT || "5001", 10),
   MONGODB_URI:
     process.env.MONGODB_URI ||
     "mongodb://localhost:27017/news-portal",

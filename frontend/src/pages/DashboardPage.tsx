@@ -307,7 +307,7 @@ export default function DashboardPage() {
       formData.append("image", file);
 
       const t = getToken();
-      const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+      const baseUrl = import.meta.env.VITE_API_URL || "http://localhost:5001/api";
       // If baseUrl already ends with /api, we just append /upload
       const endpoint = baseUrl.endsWith("/api") ? `${baseUrl}/upload` : `${baseUrl}/api/upload`;
       const res = await fetch(endpoint, {

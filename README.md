@@ -56,7 +56,7 @@ Copy the frontend environment template:
 cp frontend/.env.example frontend/.env
 ```
 Inside `frontend/.env`, configure:
-- `VITE_API_URL`: The URL pointing to the backend Express server (default: `http://localhost:5000/api`)
+- `VITE_API_URL`: The URL pointing to the backend Express server (default: `http://localhost:5001/api`)
 
 ---
 

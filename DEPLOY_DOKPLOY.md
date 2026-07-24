@@ -7,11 +7,11 @@
 1. **Create App** → Name: `backend`
 2. **Build Type**: Dockerfile
 3. **Dockerfile**: `Dockerfile.backend`
-4. **Port**: `5000`
+4. **Port**: `5001`
 5. **Health Check**: `/api/health` (or any existing endpoint)
 6. **Environment Variables**:
    ```
-   PORT=5000
+   PORT=5001
    MONGODB_URI=mongodb://your-mongo:27017/news-portal
    JWT_SECRET=your-secure-random-string
    ```
@@ -31,7 +31,7 @@
 
 ```
 yourdomain.com     → Frontend (port 3000)
-api.yourdomain.com → Backend (port 5000)
+api.yourdomain.com → Backend (port 5001)
 ```
 
 ## Key Changes Made
@@ -50,6 +50,6 @@ docker build -f Dockerfile.backend -t backend .
 docker build -f Dockerfile.frontend -t frontend .
 
 # Run
-docker run -p 5000:5000 -e MONGODB_URI=... -e JWT_SECRET=... backend
+docker run -p 5001:5001 -e MONGODB_URI=... -e JWT_SECRET=... backend
 docker run -p 3000:3000 frontend
 ```

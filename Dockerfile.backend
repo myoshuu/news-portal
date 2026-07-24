@@ -24,6 +24,6 @@ RUN bun install --production
 # Create uploads directory
 RUN mkdir -p /app/uploads
 
-EXPOSE 5000
+EXPOSE 5001
 
 CMD ["bun", "run", "server.ts"]
