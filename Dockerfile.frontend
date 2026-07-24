@@ -13,14 +13,14 @@ COPY frontend/components.json ./components.json
 COPY frontend/src ./src
 COPY frontend/public ./public
 
-# Copy shared package
-COPY shared/package.json ./shared/package.json
-COPY shared/index.ts ./shared/index.ts
+# Copy shared package (mimic workspace structure)
+COPY shared/package.json ./node_modules/@news-portal/shared/package.json
+COPY shared/index.ts ./node_modules/@news-portal/shared/index.ts
 
-# Install dependencies
-RUN bun install --frozen-lockfile
+# Install dependencies (without frozen lockfile due to workspace)
+RUN bun install
 
-# Build with vite directly (skip workspace build script)
+# Build with vite directly
 RUN bunx vite build
 
 # Production stage - serve with Bun

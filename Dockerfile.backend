@@ -10,12 +10,12 @@ COPY backend/tsconfig.json ./tsconfig.json
 COPY backend/server.ts ./server.ts
 COPY backend/src ./src
 
-# Copy shared package
-COPY shared/package.json ./shared/package.json
-COPY shared/index.ts ./shared/index.ts
+# Copy shared package (mimic workspace structure)
+COPY shared/package.json ./node_modules/@news-portal/shared/package.json
+COPY shared/index.ts ./node_modules/@news-portal/shared/index.ts
 
-# Install dependencies
-RUN bun install --frozen-lockfile
+# Install dependencies (without frozen lockfile due to workspace)
+RUN bun install
 
 # Create uploads directory
 RUN mkdir -p /app/uploads
