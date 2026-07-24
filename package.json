@@ -1,6 +1,9 @@
 {
   "name": "news-portal-monorepo",
   "private": true,
+  "scripts": {
+    "frontend:build": "bun run --filter frontend build"
+  },
   "workspaces": [
     "backend",
     "frontend",

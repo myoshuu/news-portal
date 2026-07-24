@@ -1,0 +1,42 @@
+# Frontend Dockerfile - Build with Vite, serve with Bun
+FROM oven/bun:1-alpine AS builder
+
+WORKDIR /app
+
+# Copy root workspace files
+COPY package.json bun.lock* ./
+
+# Copy shared package
+COPY shared/package.json shared/
+COPY shared/index.ts shared/
+
+# Copy frontend package
+COPY frontend/package.json frontend/
+COPY frontend/tsconfig*.json frontend/
+COPY frontend/vite.config.ts frontend/
+COPY frontend/index.html frontend/
+COPY frontend/components.json frontend/
+COPY frontend/src ./frontend/src
+COPY frontend/public ./frontend/public
+
+# Install dependencies
+RUN bun install --frozen-lockfile
+
+# Build the frontend
+RUN bun run frontend:build
+
+# Production stage - serve static files with Bun
+FROM oven/bun:1-alpine AS runner
+
+WORKDIR /app
+
+# Install serve for static file serving
+RUN bun add -g serve
+
+# Copy built static files
+COPY --from=builder /app/frontend/dist ./dist
+
+EXPOSE 3000
+
+# Serve static files on port 3000
+CMD ["serve", "-l", "3000", "dist"]
